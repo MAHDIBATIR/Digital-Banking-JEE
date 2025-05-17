@@ -1,4 +1,4 @@
-package ma.enset.digitalbanking;
+package ma.enset.digital_banking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
