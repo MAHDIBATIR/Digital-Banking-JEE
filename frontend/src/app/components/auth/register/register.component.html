@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h4>Digital Banking Registration</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+          
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="username" 
+                formControlName="username"
+                [ngClass]="{'is-invalid': registerForm.controls['username'].touched && registerForm.controls['username'].invalid}"
+              >
+              <div class="invalid-feedback" *ngIf="registerForm.controls['username'].touched && registerForm.controls['username'].errors">
+                <span *ngIf="registerForm.controls['username'].errors?.['required']">Username is required</span>
+                <span *ngIf="registerForm.controls['username'].errors?.['minlength']">Username must be at least 4 characters</span>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                formControlName="email"
+                [ngClass]="{'is-invalid': registerForm.controls['email'].touched && registerForm.controls['email'].invalid}"
+              >
+              <div class="invalid-feedback" *ngIf="registerForm.controls['email'].touched && registerForm.controls['email'].errors">
+                <span *ngIf="registerForm.controls['email'].errors?.['required']">Email is required</span>
+                <span *ngIf="registerForm.controls['email'].errors?.['email']">Please enter a valid email</span>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                formControlName="password"
+                [ngClass]="{'is-invalid': registerForm.controls['password'].touched && registerForm.controls['password'].invalid}"
+              >
+              <div class="invalid-feedback" *ngIf="registerForm.controls['password'].touched && registerForm.controls['password'].errors">
+                <span *ngIf="registerForm.controls['password'].errors?.['required']">Password is required</span>
+                <span *ngIf="registerForm.controls['password'].errors?.['minlength']">Password must be at least 6 characters</span>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="confirmPassword" 
+                formControlName="confirmPassword"
+                [ngClass]="{'is-invalid': (registerForm.controls['confirmPassword'].touched && registerForm.controls['confirmPassword'].invalid) || (registerForm.controls['confirmPassword'].touched && registerForm.errors?.['mismatch'])}"
+              >
+              <div class="invalid-feedback">
+                <span *ngIf="registerForm.controls['confirmPassword'].errors?.['required']">Please confirm your password</span>
+                <span *ngIf="registerForm.errors?.['mismatch']">Passwords do not match</span>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                [disabled]="registerForm.invalid || isLoading"
+              >
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                Register
+              </button>
+            </div>
+          </form>
+          
+          <div class="text-center mt-3">
+            <p>Already have an account? <a routerLink="/login">Login here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
