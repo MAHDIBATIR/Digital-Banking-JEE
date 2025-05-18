@@ -1,0 +1,98 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">Customer Management</div>
+    <div class="card-body">
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Search Form -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <form [formGroup]="searchFormGroup" (ngSubmit)="searchCustomers()">
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="keyword" placeholder="Search customers...">
+              <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Search
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Customer Form -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              {{ isEditMode ? 'Edit Customer' : 'New Customer' }}
+            </div>
+            <div class="card-body">
+              <form [formGroup]="customerFormGroup" (ngSubmit)="saveCustomer()">
+                <div class="mb-3">
+                  <label class="form-label">Name</label>
+                  <input type="text" class="form-control" formControlName="name">
+                  <div *ngIf="customerFormGroup.controls['name'].touched && customerFormGroup.controls['name'].invalid" class="text-danger">
+                    <div *ngIf="customerFormGroup.controls['name'].errors?.['required']">Name is required</div>
+                    <div *ngIf="customerFormGroup.controls['name'].errors?.['minlength']">Name must be at least 3 characters</div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" formControlName="email">
+                  <div *ngIf="customerFormGroup.controls['email'].touched && customerFormGroup.controls['email'].invalid" class="text-danger">
+                    <div *ngIf="customerFormGroup.controls['email'].errors?.['required']">Email is required</div>
+                    <div *ngIf="customerFormGroup.controls['email'].errors?.['email']">Invalid email format</div>
+                  </div>
+                </div>
+                <div class="d-flex">
+                  <button class="btn btn-success me-2" [disabled]="customerFormGroup.invalid">Save</button>
+                  <button *ngIf="isEditMode" type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customers Table -->
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Created By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let customer of customers">
+                <td>{{ customer.id }}</td>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.createdBy }}</td>
+                <td>
+                  <button class="btn btn-primary btn-sm me-2" (click)="editCustomer(customer)">
+                    <i class="bi bi-pencil"></i> Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteCustomer(customer)">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                  <a [routerLink]="['/customers', customer.id]" class="btn btn-info btn-sm ms-2">
+                    <i class="bi bi-eye"></i> Details
+                  </a>
+                </td>
+              </tr>
+              <tr *ngIf="customers.length === 0">
+                <td colspan="5" class="text-center">No customers found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
