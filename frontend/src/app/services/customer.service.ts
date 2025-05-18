@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { Customer } from '../models/customer.model';
 import { environment } from '../../environments/environment';
 
@@ -13,26 +13,55 @@ export class CustomerService {
   constructor(private http: HttpClient) { }
 
   getCustomers(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(this.apiUrl);
+    console.log('Fetching all customers from:', this.apiUrl);
+    return this.http.get<Customer[]>(this.apiUrl)
+      .pipe(
+        tap(customers => console.log('Customers loaded:', customers)),
+        catchError(this.handleError)
+      );
   }
 
   searchCustomers(keyword: string): Observable<Customer[]> {
-    return this.http.get<Customer[]>(`${this.apiUrl}/search?keyword=${keyword}`);
+    return this.http.get<Customer[]>(`${this.apiUrl}/search?keyword=${keyword}`)
+      .pipe(catchError(this.handleError));
   }
 
   getCustomer(id: number): Observable<Customer> {
-    return this.http.get<Customer>(`${this.apiUrl}/${id}`);
+    console.log(`Fetching customer with ID ${id}`);
+    return this.http.get<Customer>(`${this.apiUrl}/${id}`)
+      .pipe(
+        tap(customer => console.log('Customer details:', customer)),
+        catchError(this.handleError)
+      );
   }
 
   saveCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post<Customer>(this.apiUrl, customer);
+    return this.http.post<Customer>(this.apiUrl, customer)
+      .pipe(catchError(this.handleError));
   }
 
   updateCustomer(customer: Customer): Observable<Customer> {
-    return this.http.put<Customer>(`${this.apiUrl}/${customer.id}`, customer);
+    return this.http.put<Customer>(`${this.apiUrl}/${customer.id}`, customer)
+      .pipe(catchError(this.handleError));
   }
 
   deleteCustomer(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('API Error:', error);
+
+    let errorMessage = 'An unknown error occurred';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+
+    return throwError(() => errorMessage);
   }
 }

@@ -1,0 +1,95 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">User Profile</h4>
+        </div>
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <h5>Account Information</h5>
+              <div class="p-3 border rounded mb-3">
+                <p class="mb-1"><strong>Username:</strong> {{ username }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <h5>Change Password</h5>
+              <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+              </div>
+              <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+              </div>
+              <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label for="currentPassword" class="form-label">Current Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="currentPassword"
+                    formControlName="currentPassword"
+                    [ngClass]="{'is-invalid': passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid}"
+                  >
+                  <div class="invalid-feedback" *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors?.['required']">
+                    Current password is required
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="newPassword" class="form-label">New Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="newPassword"
+                    formControlName="newPassword"
+                    [ngClass]="{'is-invalid': passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid}"
+                  >
+                  <div class="invalid-feedback" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['required']">
+                    New password is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['minlength']">
+                    Password must be at least 6 characters
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="confirmPassword" class="form-label">Confirm Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="confirmPassword"
+                    formControlName="confirmPassword"
+                    [ngClass]="{'is-invalid': (passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.invalid) || passwordForm.errors?.['mismatch']}"
+                  >
+                  <div class="invalid-feedback" *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors?.['required']">
+                    Confirm password is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="passwordForm.errors?.['mismatch']">
+                    Passwords do not match
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="passwordForm.invalid || isLoading"
+                  >
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                    Change Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

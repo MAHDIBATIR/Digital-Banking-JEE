@@ -123,7 +123,7 @@
               <td>{{ getAccountType(account) }}</td>
               <td>{{ account.balance | currency }}</td>
               <td>{{ getAccountTypeValue(account) }}</td>
-              <td>{{ account.customerDTO?.name }}</td>
+              <td>{{ account.customerDTO.name }}</td>
               <td>
                 <span class="badge" [ngClass]="account.status === 'CREATED' ? 'bg-success' : 'bg-danger'">
                   {{ account.status }}

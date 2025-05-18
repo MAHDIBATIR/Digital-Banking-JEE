@@ -9,14 +9,14 @@
           <div *ngIf="errorMessage" class="alert alert-danger">
             {{ errorMessage }}
           </div>
-          
+
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
               <label for="username" class="form-label">Username</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                id="username" 
+              <input
+                type="text"
+                class="form-control"
+                id="username"
                 formControlName="username"
                 [ngClass]="{'is-invalid': loginForm.controls['username'].touched && loginForm.controls['username'].invalid}"
               >
@@ -24,13 +24,13 @@
                 Username is required
               </div>
             </div>
-            
+
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
-              <input 
-                type="password" 
-                class="form-control" 
-                id="password" 
+              <input
+                type="password"
+                class="form-control"
+                id="password"
                 formControlName="password"
                 [ngClass]="{'is-invalid': loginForm.controls['password'].touched && loginForm.controls['password'].invalid}"
               >
@@ -38,19 +38,28 @@
                 Password is required
               </div>
             </div>
-            
+
             <div class="d-grid gap-2">
-              <button 
-                type="submit" 
-                class="btn btn-primary" 
+              <button
+                type="submit"
+                class="btn btn-primary"
                 [disabled]="loginForm.invalid || isLoading"
               >
                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" *ngIf="isLoading"></span>
                 Login
               </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="loginAsAdmin()"
+                [disabled]="isLoading"
+              >
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                Login as Admin
+              </button>
             </div>
           </form>
-          
+
           <div class="text-center mt-3">
             <p>Don't have an account? <a routerLink="/register">Register here</a></p>
           </div>

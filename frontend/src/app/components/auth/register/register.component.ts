@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule]
 })
 export class RegisterComponent {
   registerForm: FormGroup;
@@ -31,7 +34,7 @@ export class RegisterComponent {
   passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
-    
+
     return password === confirmPassword ? null : { mismatch: true };
   }
 
@@ -39,12 +42,12 @@ export class RegisterComponent {
     if (this.registerForm.invalid) {
       return;
     }
-    
+
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     const { username, email, password } = this.registerForm.value;
-    
+
     this.authService.register({ username, email, password }).subscribe({
       next: () => {
         this.isLoading = false;

@@ -1,35 +1,42 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
 
-  constructor(private authService: AuthService) {}
+  // Get token from localStorage
+  const token = localStorage.getItem('auth_token');
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const token = this.authService.getToken();
-
-    // Skip authentication for public endpoints
-    if (request.url.includes('/auth/login') || request.url.includes('/auth/register')) {
-      return next.handle(request);
-    }
-
-    if (token) {
-      const authRequest = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return next.handle(authRequest);
-    }
-
-    return next.handle(request);
+  // Skip authentication for public endpoints
+  if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
+    return next(req);
   }
-}
+
+  if (token) {
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return next(authReq).pipe(
+      catchError(error => {
+        // If we get a 401 Unauthorized or 403 Forbidden response,
+        // redirect to the login page
+        if (error.status === 401 || error.status === 403) {
+          console.log('Authentication error:', error);
+          // Clear token and redirect to login
+          localStorage.removeItem('auth_token');
+          router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // If no token is available, redirect to login
+  router.navigate(['/login']);
+  return next(req);
+};

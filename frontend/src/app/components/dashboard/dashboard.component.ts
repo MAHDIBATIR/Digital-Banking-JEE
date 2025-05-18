@@ -1,55 +1,77 @@
 import { Component, OnInit } from '@angular/core';
-import { ChartConfiguration, ChartData } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
-import { CustomerService } from '../../services/customer.service';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { NgChartsModule } from 'ng2-charts';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { AccountService } from '../../services/account.service';
-import { BankAccount } from '../../models/account.model';
+import { CustomerService } from '../../services/customer.service';
+import { AuthService } from '../../services/auth.service';
 import { Customer } from '../../models/customer.model';
+import { BankAccount } from '../../models/account.model';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, NgChartsModule]
 })
 export class DashboardComponent implements OnInit {
+  username: string = '';
   customers: Customer[] = [];
   accounts: BankAccount[] = [];
+  isAdmin: boolean = false;
+
   totalCustomers: number = 0;
   totalAccounts: number = 0;
-  totalCurrentAccounts: number = 0;
-  totalSavingAccounts: number = 0;
-  totalDebitOperations: number = 0;
-  totalCreditOperations: number = 0;
-  isLoading: boolean = true;
-  errorMessage: string = '';
+  totalBalance: number = 0;
 
-  // Pie chart for account types
-  public accountTypePieChartData: ChartData<'pie'> = {
+  // Account Type Distribution Chart
+  accountTypeChartData: ChartConfiguration<'pie'>['data'] = {
     labels: ['Current Accounts', 'Saving Accounts'],
     datasets: [{
-      data: [0, 0]
+      data: [0, 0],
+      backgroundColor: ['#4E73DF', '#1CC88A'],
+      hoverBackgroundColor: ['#2E59D9', '#17A673'],
+      hoverBorderColor: "rgba(234, 236, 244, 1)",
     }]
   };
-  
-  public accountTypePieChartOptions: ChartConfiguration['options'] = {
+
+  accountTypeChartOptions: ChartOptions<'pie'> = {
     responsive: true,
     plugins: {
       legend: {
-        display: true,
         position: 'top',
       },
+      title: {
+        display: true,
+        text: 'Account Types Distribution'
+      }
     }
   };
-  
-  // Bar chart for balance distribution
-  public balanceBarChartData: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Account Balance' }
-    ]
+
+  // Balance Distribution Chart
+  balanceChartData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['< $1000', '$1000-$5000', '$5000-$10000', '> $10000'],
+    datasets: [{
+      data: [0, 0, 0, 0],
+      backgroundColor: [
+        '#4E73DF',
+        '#1CC88A',
+        '#36B9CC',
+        '#F6C23E'
+      ],
+      borderColor: [
+        '#4E73DF',
+        '#1CC88A',
+        '#36B9CC',
+        '#F6C23E'
+      ],
+      borderWidth: 1
+    }]
   };
-  
-  public balanceBarChartOptions: ChartConfiguration['options'] = {
+
+  balanceChartOptions: ChartOptions<'bar'> = {
     responsive: true,
     scales: {
       y: {
@@ -58,97 +80,117 @@ export class DashboardComponent implements OnInit {
     },
     plugins: {
       legend: {
+        display: false
+      },
+      title: {
         display: true,
-      }
-    }
-  };
-  
-  // Doughnut chart for operations
-  public operationsDoughnutChartData: ChartData<'doughnut'> = {
-    labels: ['Debit Operations', 'Credit Operations'],
-    datasets: [{
-      data: [0, 0]
-    }]
-  };
-  
-  public operationsDoughnutChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
+        text: 'Account Balance Distribution'
       }
     }
   };
 
   constructor(
+    private accountService: AccountService,
     private customerService: CustomerService,
-    private accountService: AccountService
-  ) {}
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.loadData();
+    this.username = this.authService.getUsername();
+    this.isAdmin = this.authService.hasRole('ADMIN');
+    this.loadDashboardData();
   }
 
-  loadData(): void {
-    this.isLoading = true;
-    
-    // Load customers
-    this.customerService.getCustomers().subscribe({
-      next: (customers) => {
-        this.customers = customers;
-        this.totalCustomers = customers.length;
-        
-        // Load accounts
-        this.accountService.getAccounts().subscribe({
-          next: (accounts) => {
-            this.accounts = accounts;
-            this.totalAccounts = accounts.length;
-            this.analyzeData();
-            this.isLoading = false;
-          },
-          error: (err) => {
-            this.errorMessage = err.message;
-            this.isLoading = false;
-          }
-        });
+  loadDashboardData(): void {
+    // Only load customers if user is admin
+    if (this.isAdmin) {
+      this.customerService.getCustomers().subscribe({
+        next: (data: Customer[]) => {
+          this.customers = data;
+          this.totalCustomers = data.length;
+        },
+        error: (err: any) => {
+          console.error('Error loading customers', err);
+          // Handle error gracefully
+          this.totalCustomers = 0;
+        }
+      });
+    }
+
+    // Load accounts for the current user
+    this.accountService.getAllAccounts().subscribe({
+      next: (data: BankAccount[]) => {
+        console.log('Accounts loaded:', data);
+        this.accounts = data;
+        this.totalAccounts = data.length;
+        this.calculateTotalBalance();
+        this.updateAccountTypeChart();
+        this.updateBalanceDistributionChart();
       },
-      error: (err) => {
-        this.errorMessage = err.message;
-        this.isLoading = false;
+      error: (err: any) => {
+        console.error('Error loading accounts', err);
+        // Handle error gracefully
+        this.accounts = [];
+        this.totalAccounts = 0;
+        this.totalBalance = 0;
       }
     });
   }
 
-  analyzeData(): void {
-    // Count account types
-    this.totalCurrentAccounts = this.accounts.filter(account => account.type === 'CurrentAccount').length;
-    this.totalSavingAccounts = this.accounts.filter(account => account.type === 'SavingAccount').length;
-    
-    // Update account type pie chart
-    this.accountTypePieChartData.datasets[0].data = [this.totalCurrentAccounts, this.totalSavingAccounts];
-    
-    // Prepare balance distribution data
-    const customerNames: string[] = [];
-    const balances: number[] = [];
-    
-    // Take up to 10 accounts for the bar chart
-    const displayAccounts = this.accounts.slice(0, 10);
-    
-    displayAccounts.forEach(account => {
-      const customerName = account.customerDTO?.name || 'Unknown';
-      customerNames.push(`${customerName} (${account.id.substring(0, 8)}...)`);
-      balances.push(account.balance);
+  calculateTotalBalance(): void {
+    this.totalBalance = this.accounts.reduce((sum, account) => sum + account.balance, 0);
+  }
+
+  updateAccountTypeChart(): void {
+    const currentAccounts = this.accounts.filter(acc => acc.type === 'CurrentAccount').length;
+    const savingAccounts = this.accounts.filter(acc => acc.type === 'SavingAccount').length;
+
+    console.log('Chart data - Account types:', { currentAccounts, savingAccounts });
+
+    // Force chart update by creating a new data array
+    this.accountTypeChartData = {
+      labels: ['Current Accounts', 'Saving Accounts'],
+      datasets: [{
+        data: [currentAccounts, savingAccounts],
+        backgroundColor: ['#4E73DF', '#1CC88A'],
+        hoverBackgroundColor: ['#2E59D9', '#17A673'],
+        hoverBorderColor: "rgba(234, 236, 244, 1)"
+      }]
+    };
+  }
+
+  updateBalanceDistributionChart(): void {
+    const lessThan1000 = this.accounts.filter(acc => acc.balance < 1000).length;
+    const between1000And5000 = this.accounts.filter(acc => acc.balance >= 1000 && acc.balance < 5000).length;
+    const between5000And10000 = this.accounts.filter(acc => acc.balance >= 5000 && acc.balance < 10000).length;
+    const moreThan10000 = this.accounts.filter(acc => acc.balance >= 10000).length;
+
+    console.log('Chart data - Balance distribution:', {
+      lessThan1000,
+      between1000And5000,
+      between5000And10000,
+      moreThan10000
     });
-    
-    this.balanceBarChartData.labels = customerNames;
-    this.balanceBarChartData.datasets[0].data = balances;
-    
-    // For demo purposes, we'll just set some random values for operations
-    // In a real app, this would come from the backend
-    this.totalDebitOperations = Math.floor(Math.random() * 100) + 50;
-    this.totalCreditOperations = Math.floor(Math.random() * 100) + 30;
-    
-    this.operationsDoughnutChartData.datasets[0].data = [this.totalDebitOperations, this.totalCreditOperations];
+
+    // Force chart update by creating a new data array
+    this.balanceChartData = {
+      labels: ['< $1000', '$1000-$5000', '$5000-$10000', '> $10000'],
+      datasets: [{
+        data: [lessThan1000, between1000And5000, between5000And10000, moreThan10000],
+        backgroundColor: [
+          '#4E73DF',
+          '#1CC88A',
+          '#36B9CC',
+          '#F6C23E'
+        ],
+        borderColor: [
+          '#4E73DF',
+          '#1CC88A',
+          '#36B9CC',
+          '#F6C23E'
+        ],
+        borderWidth: 1
+      }]
+    };
   }
 }

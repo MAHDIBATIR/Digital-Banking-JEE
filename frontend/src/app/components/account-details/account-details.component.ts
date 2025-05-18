@@ -1,14 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BankAccount } from '../../models/account.model';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CommonModule, CurrencyPipe, DatePipe, NgClass } from '@angular/common';
+import { BankAccount, CurrentAccount, SavingAccount } from '../../models/account.model';
 import { AccountHistory, OperationRequest, TransferRequest } from '../../models/operation.model';
 import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-account-details',
   templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.scss']
+  styleUrls: ['./account-details.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CurrencyPipe,
+    DatePipe,
+    NgClass
+  ]
 })
 export class AccountDetailsComponent implements OnInit {
   accountId: string = '';
@@ -172,5 +183,21 @@ export class AccountDetailsComponent implements OnInit {
 
   getOperationBadgeClass(operation: string): string {
     return operation === 'DEBIT' ? 'bg-danger' : 'bg-success';
+  }
+
+  // Get overdraft with proper type casting
+  getOverDraft(): number {
+    if (this.account && this.account.type === 'CurrentAccount') {
+      return (this.account as CurrentAccount).overDraft;
+    }
+    return 0;
+  }
+
+  // Get interest rate with proper type casting
+  getInterestRate(): number {
+    if (this.account && this.account.type === 'SavingAccount') {
+      return (this.account as SavingAccount).interestRate;
+    }
+    return 0;
   }
 }

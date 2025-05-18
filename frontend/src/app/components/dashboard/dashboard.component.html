@@ -1,166 +1,140 @@
-<div class="container">
-  <div class="dashboard-header">
-    <h2>Banking Dashboard</h2>
-    <p class="text-muted">Welcome to your Digital Banking dashboard</p>
-  </div>
-
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2">Loading dashboard data...</p>
-  </div>
-
-  <div *ngIf="errorMessage" class="alert alert-danger">
-    {{ errorMessage }}
-  </div>
-
-  <div *ngIf="!isLoading && !errorMessage">
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="card stats-card">
-          <div class="card-body">
-            <div class="stats-icon bg-primary">
-              <i class="bi bi-people-fill"></i>
-            </div>
-            <h5 class="stats-title">Total Customers</h5>
-            <h3 class="stats-number">{{ totalCustomers }}</h3>
-          </div>
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Dashboard</h4>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card stats-card">
-          <div class="card-body">
-            <div class="stats-icon bg-success">
-              <i class="bi bi-bank"></i>
-            </div>
-            <h5 class="stats-title">Total Accounts</h5>
-            <h3 class="stats-number">{{ totalAccounts }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card stats-card">
-          <div class="card-body">
-            <div class="stats-icon bg-warning">
-              <i class="bi bi-credit-card"></i>
-            </div>
-            <h5 class="stats-title">Current Accounts</h5>
-            <h3 class="stats-number">{{ totalCurrentAccounts }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card stats-card">
-          <div class="card-body">
-            <div class="stats-icon bg-info">
-              <i class="bi bi-piggy-bank"></i>
-            </div>
-            <h5 class="stats-title">Saving Accounts</h5>
-            <h3 class="stats-number">{{ totalSavingAccounts }}</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Charts Row -->
-    <div class="row">
-      <!-- Account Types Chart -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">Account Distribution</h5>
-          </div>
-          <div class="card-body">
-            <canvas baseChart
-                  [data]="accountTypePieChartData"
-                  [options]="accountTypePieChartOptions"
-                  [type]="'pie'">
-            </canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Balance Distribution Chart -->
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">Account Balance Distribution</h5>
-          </div>
-          <div class="card-body">
-            <canvas baseChart 
-                  [data]="balanceBarChartData"
-                  [options]="balanceBarChartOptions"
-                  [type]="'bar'">
-            </canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Operations Chart -->
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">Operations Overview</h5>
-          </div>
-          <div class="card-body">
-            <canvas baseChart
-                  [data]="operationsDoughnutChartData"
-                  [options]="operationsDoughnutChartOptions"
-                  [type]="'doughnut'">
-            </canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">Recent Activity</h5>
-          </div>
-          <div class="card-body">
-            <div class="activity-item">
-              <div class="activity-icon bg-success">
-                <i class="bi bi-arrow-up-circle"></i>
-              </div>
-              <div class="activity-content">
-                <h6 class="mb-1">Credit Operation</h6>
-                <p class="text-muted mb-0">$1,200.00 to account ending with 8X4Z</p>
-                <small class="text-muted">2 hours ago</small>
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-lg-3 col-md-6" *ngIf="isAdmin">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Customers</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalCustomers }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="bi bi-people-fill fs-2 text-primary"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="activity-item">
-              <div class="activity-icon bg-danger">
-                <i class="bi bi-arrow-down-circle"></i>
-              </div>
-              <div class="activity-content">
-                <h6 class="mb-1">Debit Operation</h6>
-                <p class="text-muted mb-0">$850.00 from account ending with 7T9P</p>
-                <small class="text-muted">4 hours ago</small>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon bg-primary">
-                <i class="bi bi-person-plus"></i>
-              </div>
-              <div class="activity-content">
-                <h6 class="mb-1">New Customer</h6>
-                <p class="text-muted mb-0">John Doe was added to the system</p>
-                <small class="text-muted">Yesterday</small>
+
+            <div class="col-lg-3 col-md-6">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Accounts</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalAccounts }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="bi bi-credit-card-fill fs-2 text-success"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="activity-item">
-              <div class="activity-icon bg-info">
-                <i class="bi bi-bank"></i>
+
+            <div [ngClass]="isAdmin ? 'col-lg-6' : 'col-lg-9'" class="col-md-12">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Balance</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalBalance | currency }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="bi bi-cash-stack fs-2 text-info"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="activity-content">
-                <h6 class="mb-1">New Account</h6>
-                <p class="text-muted mb-0">Saving account created for customer Sarah Smith</p>
-                <small class="text-muted">Yesterday</small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 mb-4">
+              <div class="card shadow">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Account Types</h5>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                  <div style="display: block; height: 300px; width: 300px;">
+                    <canvas
+                      baseChart
+                      [type]="'pie'"
+                      [data]="accountTypeChartData"
+                      [options]="accountTypeChartOptions">
+                    </canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+              <div class="card shadow">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Balance Distribution</h5>
+                </div>
+                <div class="card-body">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="balanceChartData"
+                    [options]="balanceChartOptions">
+                  </canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-lg-12">
+              <div class="card shadow">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Recent Accounts</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Type</th>
+                          <th>Balance</th>
+                          <th *ngIf="isAdmin">Customer</th>
+                          <th>Status</th>
+                          <th *ngIf="isAdmin">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let account of accounts.slice(0, 5)">
+                          <td>{{ account.id }}</td>
+                          <td>{{ account.type === 'CurrentAccount' ? 'Current Account' : 'Saving Account' }}</td>
+                          <td>{{ account.balance | currency }}</td>
+                          <td *ngIf="isAdmin">{{ account.customerDTO?.name }}</td>
+                          <td>
+                            <span class="badge" [ngClass]="account.status === 'CREATED' ? 'bg-success' : 'bg-danger'">
+                              {{ account.status }}
+                            </span>
+                          </td>
+                          <td *ngIf="isAdmin">
+                            <a [routerLink]="['/accounts', account.id]" class="btn btn-info btn-sm">
+                              <i class="bi bi-eye"></i> View
+                            </a>
+                          </td>
+                        </tr>
+                        <tr *ngIf="accounts.length === 0">
+                          <td [attr.colspan]="isAdmin ? 6 : 4" class="text-center">No accounts found</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CommonModule, CurrencyPipe, DatePipe, NgClass } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { BankAccount } from '../../models/account.model';
 import { Customer } from '../../models/customer.model';
 import { AccountService } from '../../services/account.service';
@@ -8,7 +10,17 @@ import { CustomerService } from '../../services/customer.service';
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
-  styleUrls: ['./accounts.component.scss']
+  styleUrls: ['./accounts.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    RouterModule,
+    CurrencyPipe,
+    DatePipe,
+    NgClass
+  ]
 })
 export class AccountsComponent implements OnInit {
   accounts: BankAccount[] = [];
@@ -68,7 +80,7 @@ export class AccountsComponent implements OnInit {
     if (this.currentAccountForm.invalid) {
       return;
     }
-    
+
     const { initialBalance, overDraft, customerId } = this.currentAccountForm.value;
 
     this.accountService.saveCurrentAccount(initialBalance, overDraft, customerId).subscribe({
@@ -96,7 +108,7 @@ export class AccountsComponent implements OnInit {
     if (this.savingAccountForm.invalid) {
       return;
     }
-    
+
     const { initialBalance, interestRate, customerId } = this.savingAccountForm.value;
 
     this.accountService.saveSavingAccount(initialBalance, interestRate, customerId).subscribe({

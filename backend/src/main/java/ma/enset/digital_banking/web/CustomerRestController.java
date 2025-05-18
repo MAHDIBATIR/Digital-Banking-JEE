@@ -18,34 +18,57 @@ public class CustomerRestController {
     private BankAccountService bankAccountService;
 
     @GetMapping("/customers")
-    public List<CustomerDTO> customers() {
+    public List<CustomerDTO> customers(Authentication authentication) {
+        if (authentication != null) {
+            log.info("Customer list accessed by: " + authentication.getName());
+        }
         return bankAccountService.listCustomers();
     }
 
     @GetMapping("/customers/search")
-    public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword) {
+    public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword, 
+                                             Authentication authentication) {
+        if (authentication != null) {
+            log.info("Customer search performed by: " + authentication.getName() + " with keyword: " + keyword);
+        }
         return bankAccountService.searchCustomers(keyword);
     }
 
     @GetMapping("/customers/{id}")
-    public CustomerDTO getCustomer(@PathVariable(name = "id") Long customerId) throws CustomerNotFoundException {
+    public CustomerDTO getCustomer(@PathVariable(name = "id") Long customerId, 
+                                   Authentication authentication) throws CustomerNotFoundException {
+        if (authentication != null) {
+            log.info("Customer details accessed by: " + authentication.getName() + " for customer ID: " + customerId);
+        }
         return bankAccountService.getCustomer(customerId);
     }
 
     @PostMapping("/customers")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO, Authentication authentication) {
-        customerDTO.setCreatedBy(authentication.getName());
+        if (authentication != null) {
+            customerDTO.setCreatedBy(authentication.getName());
+            log.info("Customer created by: " + authentication.getName());
+        }
         return bankAccountService.saveCustomer(customerDTO);
     }
 
     @PutMapping("/customers/{customerId}")
-    public CustomerDTO updateCustomer(@PathVariable Long customerId, @RequestBody CustomerDTO customerDTO) {
+    public CustomerDTO updateCustomer(@PathVariable Long customerId, 
+                                    @RequestBody CustomerDTO customerDTO, 
+                                    Authentication authentication) {
         customerDTO.setId(customerId);
+        if (authentication != null) {
+            customerDTO.setCreatedBy(authentication.getName()); 
+            log.info("Customer updated by: " + authentication.getName() + " for customer ID: " + customerId);
+        }
         return bankAccountService.updateCustomer(customerDTO);
     }
 
     @DeleteMapping("/customers/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
+    public void deleteCustomer(@PathVariable Long id, Authentication authentication) {
+        if (authentication != null) {
+            log.info("Customer deleted by: " + authentication.getName() + " for customer ID: " + id);
+        }
         bankAccountService.deleteCustomer(id);
     }
 }

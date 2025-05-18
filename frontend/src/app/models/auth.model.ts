@@ -7,6 +7,7 @@ export interface RegisterRequest {
   username: string;
   password: string;
   email: string;
+  fullName?: string;
 }
 
 export interface PasswordChangeRequest {
@@ -16,5 +17,7 @@ export interface PasswordChangeRequest {
 
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
   username: string;
+  roles: string[];
 }

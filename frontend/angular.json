@@ -70,10 +70,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "digital-banking:build:production"
+              "buildTarget": "digital-banking:build:production"
             },
             "development": {
-              "browserTarget": "digital-banking:build:development"
+              "buildTarget": "digital-banking:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -81,7 +81,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "digital-banking:build"
+            "buildTarget": "digital-banking:build"
           }
         }
       }

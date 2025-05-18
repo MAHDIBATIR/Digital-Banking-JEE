@@ -5,6 +5,7 @@ import { BankAccount, CurrentAccount, SavingAccount } from '../models/account.mo
 import { AccountHistory } from '../models/operation.model';
 import { OperationRequest, TransferRequest } from '../models/operation.model';
 import { environment } from '../../environments/environment';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -54,5 +55,13 @@ export class AccountService {
       `${this.apiUrl}/saving?initialBalance=${balance}&interestRate=${interestRate}&customerId=${customerId}`,
       {}
     );
+  }
+
+  getAllAccounts(): Observable<Array<BankAccount>> {
+    console.log('Fetching all accounts from:', this.apiUrl);
+    return this.http.get<Array<BankAccount>>(this.apiUrl)
+      .pipe(
+        tap(accounts => console.log('Accounts response:', accounts))
+      );
   }
 }

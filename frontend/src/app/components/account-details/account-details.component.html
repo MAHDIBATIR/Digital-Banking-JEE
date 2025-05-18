@@ -33,11 +33,11 @@
               </li>
               <li class="list-group-item d-flex justify-content-between" *ngIf="account.type === 'CurrentAccount'">
                 <span>Overdraft:</span>
-                <span class="fw-bold">{{ account['overDraft'] | currency }}</span>
+                <span class="fw-bold">{{ getOverDraft() | currency }}</span>
               </li>
               <li class="list-group-item d-flex justify-content-between" *ngIf="account.type === 'SavingAccount'">
                 <span>Interest Rate:</span>
-                <span class="fw-bold">{{ account['interestRate'] }}%</span>
+                <span class="fw-bold">{{ getInterestRate() }}%</span>
               </li>
               <li class="list-group-item d-flex justify-content-between">
                 <span>Status:</span>
@@ -74,15 +74,15 @@
         <div class="card-header bg-primary text-white">
           <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-              <a class="nav-link" [ngClass]="selectedOperation === 'DEBIT' ? 'active text-dark' : ''" href="#" 
+              <a class="nav-link" [ngClass]="selectedOperation === 'DEBIT' ? 'active text-dark' : ''" href="#"
                  (click)="$event.preventDefault(); setOperation('DEBIT')">Debit Operation</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" [ngClass]="selectedOperation === 'CREDIT' ? 'active text-dark' : ''" href="#" 
+              <a class="nav-link" [ngClass]="selectedOperation === 'CREDIT' ? 'active text-dark' : ''" href="#"
                  (click)="$event.preventDefault(); setOperation('CREDIT')">Credit Operation</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" [ngClass]="selectedOperation === 'TRANSFER' ? 'active text-dark' : ''" href="#" 
+              <a class="nav-link" [ngClass]="selectedOperation === 'TRANSFER' ? 'active text-dark' : ''" href="#"
                  (click)="$event.preventDefault(); setOperation('TRANSFER')">Transfer</a>
             </li>
           </ul>
@@ -183,7 +183,7 @@
                 </tr>
               </tbody>
             </table>
-            
+
             <!-- Pagination -->
             <nav *ngIf="accountHistory.totalPages > 1">
               <ul class="pagination justify-content-center">
