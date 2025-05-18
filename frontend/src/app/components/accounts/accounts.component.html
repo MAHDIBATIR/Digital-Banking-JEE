@@ -1,0 +1,150 @@
+<div class="container">
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">New Bank Account</h5>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn" [ngClass]="accountType === 'current' ? 'btn-light' : 'btn-outline-light'" (click)="toggleAccountType('current')">Current Account</button>
+        <button type="button" class="btn" [ngClass]="accountType === 'saving' ? 'btn-light' : 'btn-outline-light'" (click)="toggleAccountType('saving')">Saving Account</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+      </div>
+
+      <!-- Current Account Form -->
+      <form *ngIf="accountType === 'current'" [formGroup]="currentAccountForm" (ngSubmit)="saveCurrentAccount()" class="row">
+        <div class="col-md-4 mb-3">
+          <label for="initialBalance" class="form-label">Initial Balance</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" class="form-control" id="initialBalance" formControlName="initialBalance" min="0">
+          </div>
+          <div *ngIf="currentAccountForm.controls['initialBalance'].invalid && currentAccountForm.controls['initialBalance'].touched" class="text-danger small">
+            <span *ngIf="currentAccountForm.controls['initialBalance'].errors?.['required']">Balance is required</span>
+            <span *ngIf="currentAccountForm.controls['initialBalance'].errors?.['min']">Balance cannot be negative</span>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="overDraft" class="form-label">Overdraft</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" class="form-control" id="overDraft" formControlName="overDraft" min="0">
+          </div>
+          <div *ngIf="currentAccountForm.controls['overDraft'].invalid && currentAccountForm.controls['overDraft'].touched" class="text-danger small">
+            <span *ngIf="currentAccountForm.controls['overDraft'].errors?.['required']">Overdraft is required</span>
+            <span *ngIf="currentAccountForm.controls['overDraft'].errors?.['min']">Overdraft cannot be negative</span>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="customerId" class="form-label">Customer</label>
+          <select class="form-select" id="customerId" formControlName="customerId">
+            <option value="">Select a customer</option>
+            <option *ngFor="let customer of customers" [value]="customer.id">{{ customer.name }}</option>
+          </select>
+          <div *ngIf="currentAccountForm.controls['customerId'].invalid && currentAccountForm.controls['customerId'].touched" class="text-danger small">
+            <span *ngIf="currentAccountForm.controls['customerId'].errors?.['required']">Customer is required</span>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary" [disabled]="currentAccountForm.invalid">Create Current Account</button>
+        </div>
+      </form>
+
+      <!-- Saving Account Form -->
+      <form *ngIf="accountType === 'saving'" [formGroup]="savingAccountForm" (ngSubmit)="saveSavingAccount()" class="row">
+        <div class="col-md-4 mb-3">
+          <label for="savingInitialBalance" class="form-label">Initial Balance</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" class="form-control" id="savingInitialBalance" formControlName="initialBalance" min="0">
+          </div>
+          <div *ngIf="savingAccountForm.controls['initialBalance'].invalid && savingAccountForm.controls['initialBalance'].touched" class="text-danger small">
+            <span *ngIf="savingAccountForm.controls['initialBalance'].errors?.['required']">Balance is required</span>
+            <span *ngIf="savingAccountForm.controls['initialBalance'].errors?.['min']">Balance cannot be negative</span>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="interestRate" class="form-label">Interest Rate</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="interestRate" formControlName="interestRate" min="0" max="100">
+            <span class="input-group-text">%</span>
+          </div>
+          <div *ngIf="savingAccountForm.controls['interestRate'].invalid && savingAccountForm.controls['interestRate'].touched" class="text-danger small">
+            <span *ngIf="savingAccountForm.controls['interestRate'].errors?.['required']">Interest rate is required</span>
+            <span *ngIf="savingAccountForm.controls['interestRate'].errors?.['min']">Interest rate cannot be negative</span>
+            <span *ngIf="savingAccountForm.controls['interestRate'].errors?.['max']">Interest rate cannot exceed 100%</span>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="savingCustomerId" class="form-label">Customer</label>
+          <select class="form-select" id="savingCustomerId" formControlName="customerId">
+            <option value="">Select a customer</option>
+            <option *ngFor="let customer of customers" [value]="customer.id">{{ customer.name }}</option>
+          </select>
+          <div *ngIf="savingAccountForm.controls['customerId'].invalid && savingAccountForm.controls['customerId'].touched" class="text-danger small">
+            <span *ngIf="savingAccountForm.controls['customerId'].errors?.['required']">Customer is required</span>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary" [disabled]="savingAccountForm.invalid">Create Saving Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Bank Accounts List</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Account ID</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Special Value</th>
+              <th>Customer</th>
+              <th>Status</th>
+              <th>Created At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let account of accounts">
+              <td>{{ account.id }}</td>
+              <td>{{ getAccountType(account) }}</td>
+              <td>{{ account.balance | currency }}</td>
+              <td>{{ getAccountTypeValue(account) }}</td>
+              <td>{{ account.customerDTO?.name }}</td>
+              <td>
+                <span class="badge" [ngClass]="account.status === 'CREATED' ? 'bg-success' : 'bg-danger'">
+                  {{ account.status }}
+                </span>
+              </td>
+              <td>{{ account.createdAt | date:'short' }}</td>
+              <td>
+                <a [routerLink]="['/accounts', account.id]" class="btn btn-info btn-sm me-2">
+                  <i class="bi bi-eye"></i> View
+                </a>
+                <a [routerLink]="['/accounts', account.id, 'operations']" class="btn btn-success btn-sm">
+                  <i class="bi bi-cash"></i> Operations
+                </a>
+              </td>
+            </tr>
+            <tr *ngIf="accounts.length === 0">
+              <td colspan="8" class="text-center">No accounts found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

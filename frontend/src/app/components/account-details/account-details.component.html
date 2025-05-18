@@ -1,0 +1,214 @@
+<div class="container mt-4">
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+
+  <div class="row" *ngIf="account">
+    <!-- Account Details Card -->
+    <div class="col-md-5">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Account Details</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Account Information</h6>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Account ID:</span>
+                <span class="fw-bold">{{ account.id }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Type:</span>
+                <span class="fw-bold">{{ getAccountType() }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Balance:</span>
+                <span class="fw-bold">{{ account.balance | currency }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between" *ngIf="account.type === 'CurrentAccount'">
+                <span>Overdraft:</span>
+                <span class="fw-bold">{{ account['overDraft'] | currency }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between" *ngIf="account.type === 'SavingAccount'">
+                <span>Interest Rate:</span>
+                <span class="fw-bold">{{ account['interestRate'] }}%</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Status:</span>
+                <span class="badge" [ngClass]="account.status === 'CREATED' ? 'bg-success' : 'bg-danger'">
+                  {{ account.status }}
+                </span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Created At:</span>
+                <span>{{ account.createdAt | date:'medium' }}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mb-0">
+            <h6 class="text-muted mb-2">Customer Information</h6>
+            <ul class="list-group list-group-flush" *ngIf="account.customerDTO">
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Name:</span>
+                <span class="fw-bold">{{ account.customerDTO.name }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Email:</span>
+                <span>{{ account.customerDTO.email }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operation Form -->
+    <div class="col-md-7">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+              <a class="nav-link" [ngClass]="selectedOperation === 'DEBIT' ? 'active text-dark' : ''" href="#" 
+                 (click)="$event.preventDefault(); setOperation('DEBIT')">Debit Operation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [ngClass]="selectedOperation === 'CREDIT' ? 'active text-dark' : ''" href="#" 
+                 (click)="$event.preventDefault(); setOperation('CREDIT')">Credit Operation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [ngClass]="selectedOperation === 'TRANSFER' ? 'active text-dark' : ''" href="#" 
+                 (click)="$event.preventDefault(); setOperation('TRANSFER')">Transfer</a>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div *ngIf="selectedOperation !== 'TRANSFER'">
+            <h5 class="card-title">{{ selectedOperation === 'DEBIT' ? 'Debit' : 'Credit' }} Operation</h5>
+            <form [formGroup]="operationFormGroup" (ngSubmit)="executeOperation()">
+              <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="amount" formControlName="amount" min="1">
+                </div>
+                <div *ngIf="operationFormGroup.get('amount')?.touched && operationFormGroup.get('amount')?.invalid" class="text-danger small">
+                  <span *ngIf="operationFormGroup.get('amount')?.errors?.['required']">Amount is required</span>
+                  <span *ngIf="operationFormGroup.get('amount')?.errors?.['min']">Amount must be at least $1</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" formControlName="description" rows="2"></textarea>
+                <div *ngIf="operationFormGroup.get('description')?.touched && operationFormGroup.get('description')?.invalid" class="text-danger small">
+                  <span *ngIf="operationFormGroup.get('description')?.errors?.['required']">Description is required</span>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" [disabled]="operationFormGroup.invalid">Execute {{ selectedOperation === 'DEBIT' ? 'Debit' : 'Credit' }}</button>
+            </form>
+          </div>
+
+          <div *ngIf="selectedOperation === 'TRANSFER'">
+            <h5 class="card-title">Transfer Funds</h5>
+            <form [formGroup]="transferFormGroup" (ngSubmit)="executeTransfer()">
+              <div class="mb-3">
+                <label for="accountDestination" class="form-label">Destination Account ID</label>
+                <input type="text" class="form-control" id="accountDestination" formControlName="accountDestination">
+                <div *ngIf="transferFormGroup.get('accountDestination')?.touched && transferFormGroup.get('accountDestination')?.invalid" class="text-danger small">
+                  <span *ngIf="transferFormGroup.get('accountDestination')?.errors?.['required']">Destination account is required</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="transferAmount" class="form-label">Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="transferAmount" formControlName="amount" min="1">
+                </div>
+                <div *ngIf="transferFormGroup.get('amount')?.touched && transferFormGroup.get('amount')?.invalid" class="text-danger small">
+                  <span *ngIf="transferFormGroup.get('amount')?.errors?.['required']">Amount is required</span>
+                  <span *ngIf="transferFormGroup.get('amount')?.errors?.['min']">Amount must be at least $1</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="transferDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="transferDescription" formControlName="description" rows="2"></textarea>
+                <div *ngIf="transferFormGroup.get('description')?.touched && transferFormGroup.get('description')?.invalid" class="text-danger small">
+                  <span *ngIf="transferFormGroup.get('description')?.errors?.['required']">Description is required</span>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" [disabled]="transferFormGroup.invalid">Execute Transfer</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Operations History -->
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Account Operations History</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive" *ngIf="accountHistory">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let operation of accountHistory.accountOperationDTOS">
+                  <td>{{ operation.id }}</td>
+                  <td>{{ operation.operationDate | date:'short' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getOperationBadgeClass(operation.type)">
+                      {{ operation.type }}
+                    </span>
+                  </td>
+                  <td>{{ operation.amount | currency }}</td>
+                  <td>{{ operation.description }}</td>
+                </tr>
+                <tr *ngIf="accountHistory.accountOperationDTOS.length === 0">
+                  <td colspan="5" class="text-center">No operations found</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- Pagination -->
+            <nav *ngIf="accountHistory.totalPages > 1">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" [ngClass]="currentPage === 0 ? 'disabled' : ''">
+                  <a class="page-link" href="#" (click)="$event.preventDefault(); goToPage(currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li class="page-item" *ngFor="let page of getPages()" [ngClass]="page === currentPage ? 'active' : ''">
+                  <a class="page-link" href="#" (click)="$event.preventDefault(); goToPage(page)">{{ page + 1 }}</a>
+                </li>
+                <li class="page-item" [ngClass]="currentPage === totalPages - 1 ? 'disabled' : ''">
+                  <a class="page-link" href="#" (click)="$event.preventDefault(); goToPage(currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" *ngIf="!account">
+    <i class="bi bi-info-circle me-2"></i> Loading account details...
+  </div>
+</div>
