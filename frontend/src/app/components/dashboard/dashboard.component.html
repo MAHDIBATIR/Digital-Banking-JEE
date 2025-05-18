@@ -1,0 +1,171 @@
+<div class="container">
+  <div class="dashboard-header">
+    <h2>Banking Dashboard</h2>
+    <p class="text-muted">Welcome to your Digital Banking dashboard</p>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading dashboard data...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card stats-card">
+          <div class="card-body">
+            <div class="stats-icon bg-primary">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <h5 class="stats-title">Total Customers</h5>
+            <h3 class="stats-number">{{ totalCustomers }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card stats-card">
+          <div class="card-body">
+            <div class="stats-icon bg-success">
+              <i class="bi bi-bank"></i>
+            </div>
+            <h5 class="stats-title">Total Accounts</h5>
+            <h3 class="stats-number">{{ totalAccounts }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card stats-card">
+          <div class="card-body">
+            <div class="stats-icon bg-warning">
+              <i class="bi bi-credit-card"></i>
+            </div>
+            <h5 class="stats-title">Current Accounts</h5>
+            <h3 class="stats-number">{{ totalCurrentAccounts }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card stats-card">
+          <div class="card-body">
+            <div class="stats-icon bg-info">
+              <i class="bi bi-piggy-bank"></i>
+            </div>
+            <h5 class="stats-title">Saving Accounts</h5>
+            <h3 class="stats-number">{{ totalSavingAccounts }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+      <!-- Account Types Chart -->
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Account Distribution</h5>
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+                  [data]="accountTypePieChartData"
+                  [options]="accountTypePieChartOptions"
+                  [type]="'pie'">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Distribution Chart -->
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Account Balance Distribution</h5>
+          </div>
+          <div class="card-body">
+            <canvas baseChart 
+                  [data]="balanceBarChartData"
+                  [options]="balanceBarChartOptions"
+                  [type]="'bar'">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operations Chart -->
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Operations Overview</h5>
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+                  [data]="operationsDoughnutChartData"
+                  [options]="operationsDoughnutChartOptions"
+                  [type]="'doughnut'">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Recent Activity</h5>
+          </div>
+          <div class="card-body">
+            <div class="activity-item">
+              <div class="activity-icon bg-success">
+                <i class="bi bi-arrow-up-circle"></i>
+              </div>
+              <div class="activity-content">
+                <h6 class="mb-1">Credit Operation</h6>
+                <p class="text-muted mb-0">$1,200.00 to account ending with 8X4Z</p>
+                <small class="text-muted">2 hours ago</small>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon bg-danger">
+                <i class="bi bi-arrow-down-circle"></i>
+              </div>
+              <div class="activity-content">
+                <h6 class="mb-1">Debit Operation</h6>
+                <p class="text-muted mb-0">$850.00 from account ending with 7T9P</p>
+                <small class="text-muted">4 hours ago</small>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon bg-primary">
+                <i class="bi bi-person-plus"></i>
+              </div>
+              <div class="activity-content">
+                <h6 class="mb-1">New Customer</h6>
+                <p class="text-muted mb-0">John Doe was added to the system</p>
+                <small class="text-muted">Yesterday</small>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon bg-info">
+                <i class="bi bi-bank"></i>
+              </div>
+              <div class="activity-content">
+                <h6 class="mb-1">New Account</h6>
+                <p class="text-muted mb-0">Saving account created for customer Sarah Smith</p>
+                <small class="text-muted">Yesterday</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
