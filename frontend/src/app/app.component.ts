@@ -1,12 +1,19 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'digital-banking-frontend';
+  title = 'Digital Banking';
+
+  constructor(public authService: AuthService, private router: Router) {}
+
+  handleLogout() {
+    this.authService.logout();
+    this.router.navigateByUrl('/login');
+  }
 }
