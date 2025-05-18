@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SavingAccountDTO extends BankAccountDTO {
+public class SavingBankAccountDTO extends BankAccountDTO {
     private double interestRate;
 }

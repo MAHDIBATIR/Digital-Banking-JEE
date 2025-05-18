@@ -1,7 +1,7 @@
 package ma.enset.digital_banking.dtos;
 
 import lombok.Data;
-import ma.enset.digital_banking.entities.enums.AccountStatus;
+import ma.enset.digital_banking.enums.AccountStatus;
 
 import java.util.Date;
 

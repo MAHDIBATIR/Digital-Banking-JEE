@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.enset.digital_banking.entities.enums.OperationType;
+import ma.enset.digital_banking.enums.OperationType;
 
 import java.util.Date;
 
