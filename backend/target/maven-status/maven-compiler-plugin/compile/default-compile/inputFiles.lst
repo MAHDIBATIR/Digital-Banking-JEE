@@ -1,3 +1,4 @@
+C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\config\OpenApiConfig.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\DigitalBankingApplication.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\dtos\AccountHistoryDTO.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\dtos\AccountOperationDTO.java
@@ -22,6 +23,7 @@ C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\m
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\repositories\AccountOperationRepository.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\repositories\BankAccountRepository.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\repositories\CustomerRepository.java
+C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\config\JwtConfig.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\config\SecurityConfig.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\dto\AuthResponse.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\dto\LoginRequest.java
@@ -33,7 +35,6 @@ C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\s
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\entities\AppUser.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\init\DataInitializer.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\jwt\JwtAuthenticationFilter.java
-C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\jwt\JwtUtil.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\jwt\JwtUtils.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\repositories\AppRoleRepository.java
 C:\ENSET\S4\JEE\Digital-banking\backend\src\main\java\ma\enset\digital_banking\security\repositories\AppUserRepository.java

@@ -3,10 +3,9 @@ package ma.enset.digital_banking.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
+import ma.enset.digital_banking.security.config.JwtConfig;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,14 +21,11 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtils {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final JwtConfig jwtConfig;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
-
-    @Value("${jwt.refresh-token.expiration}")
-    private long refreshExpiration;
+    public JwtUtils(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -49,12 +45,12 @@ public class JwtUtils {
         extraClaims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
-        
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+
+        return buildToken(extraClaims, userDetails, jwtConfig.getExpiration());
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+        return buildToken(new HashMap<>(), userDetails, jwtConfig.getRefreshToken().getExpiration());
     }
 
     private String buildToken(
@@ -95,10 +91,28 @@ public class JwtUtils {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        // Convert hex string to byte array
+        String secret = jwtConfig.getSecret();
+        if (secret == null || secret.trim().isEmpty()) {
+            throw new IllegalStateException("JWT secret is not configured. Please check application.properties");
+        }
+        byte[] keyBytes = hexStringToByteArray(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-    
+
+    private byte[] hexStringToByteArray(String hex) {
+        if (hex == null || hex.trim().isEmpty()) {
+            throw new IllegalArgumentException("Hex string cannot be null or empty");
+        }
+        int len = hex.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+                    + Character.digit(hex.charAt(i+1), 16));
+        }
+        return data;
+    }
+
     public String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -106,4 +120,4 @@ public class JwtUtils {
         }
         return null;
     }
-} 
+}

@@ -1,0 +1,1312 @@
+\documentclass[12pt,a4paper]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Page setup
+\geometry{margin=2.5cm}
+\onehalfspacing
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Digital Banking Application}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+% Code style
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% Title formatting
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{50pt}{40pt}
+
+% Counter for screenshots in each section
+\newcounter{screenshotcounter}[chapter]
+\newcommand{\screenshot}[2]{
+  \stepcounter{screenshotcounter}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#2\textwidth]{#1}
+    \caption{Screenshot \thechapter.\thescreenshotcounter: #1}
+    \label{fig:#1}
+  \end{figure}
+}
+
+% Begin document
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    {\scshape\LARGE University Name \par}
+    \vspace{1.5cm}
+    {\huge\bfseries Digital Banking Application\par}
+    \vspace{2cm}
+    {\Large A Complete Full-Stack Project with Spring Boot and Angular\par}
+    \vspace{2cm}
+    {\Large\itshape Student Name\par}
+    \vfill
+    Supervised by:\\
+    Professor Name
+    \vfill
+    {\large Academic Year 2023-2024\par}
+\end{titlepage}
+
+% Front matter
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This project presents the design and implementation of a comprehensive Digital Banking Application using modern technologies. The system provides secure authentication with JWT, role-based access control, and a full range of banking operations including customer management, account management, and transaction processing. The backend is built with Spring Boot and the frontend with Angular, creating a responsive and secure web application.
+
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+I would like to express my sincere gratitude to Professor [Name] for the guidance throughout this project. I also thank the university for providing the resources and environment needed to complete this work.
+
+% Main content begins
+\chapter{Introduction}
+\resetcounter{screenshotcounter}
+
+\section{Project Overview}
+Le projet Digital Banking est une application de gestion de comptes bancaires. Chaque compte appartient à un client et peut subir plusieurs opérations de type DEBIT ou CREDIT. L'application prend en charge deux types de comptes : Comptes courants et comptes épargnes, avec une interface web moderne.
+
+\section{Project Requirements}
+Voici les exigences du projet :
+
+\begin{itemize}
+    \item \textbf{Partie 1 : Backend}
+    \begin{itemize}
+        \item Créer un projet Spring Boot
+        \item Créer les entités JPA : Customer, BankAccount, SavingAccount, CurrentAccount, AccountOperation
+        \item Créer les interfaces JPA Repository basées sur Spring Data
+        \item Tester la couche DAO
+        \item Implémenter la couche service, DTOs
+        \item Créer les RestControllers
+        \item Tester les web services Restful
+    \end{itemize}
+    
+    \item \textbf{Partie 2 : Client Angular}
+    \begin{itemize}
+        \item Créer un client Angular pour consommer les services web
+        \item Implémenter les interfaces utilisateur
+        \item Gérer la communication avec le backend
+    \end{itemize}
+    
+    \item \textbf{Partie 3 : Sécurité}
+    \begin{itemize}
+        \item Sécuriser l'application avec Spring Security et JSON Web Token
+        \item Implémenter l'authentification et l'autorisation
+    \end{itemize}
+    
+    \item \textbf{Fonctionnalités supplémentaires}
+    \begin{itemize}
+        \item Gestion des clients (CRUD)
+        \item Gestion des comptes
+        \item Suivi des utilisateurs pour les opérations
+        \item Gestion des mots de passe
+        \item Dashboard avec ChartJS
+    \end{itemize}
+\end{itemize}
+
+\section{Technologies Used}
+This project is built using modern technologies and development practices:
+
+\subsection{Backend}
+\begin{itemize}
+    \item Spring Boot 3 - Java-based framework for creating stand-alone applications
+    \item Spring Security - Authentication and authorization framework
+    \item JWT (JSON Web Tokens) - Secure token-based authentication
+    \item JPA/Hibernate - ORM for database operations
+    \item MySQL/H2 - Database systems
+    \item Maven - Build and dependency management
+\end{itemize}
+
+\subsection{Frontend}
+\begin{itemize}
+    \item Angular 17 - Progressive JavaScript framework
+    \item Bootstrap 5 - CSS framework for responsive design
+    \item Chart.js - JavaScript library for data visualization
+    \item Angular HTTP Client - For API communication
+    \item Angular Reactive Forms - For form handling and validation
+\end{itemize}
+
+\screenshot{intro_screenshot1.png}{0.8} % Main application dashboard
+
+\chapter{Partie 1 : Backend - Implémentation}
+\resetcounter{screenshotcounter}
+
+\section{Création du projet Spring Boot}
+Nous avons créé un projet Spring Boot avec les dépendances nécessaires (Spring Web, Spring Data JPA, Spring Security, etc.).
+
+\begin{lstlisting}[language=XML, caption=pom.xml - Dépendances principales]
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>0.11.5</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.1.0</version>
+    </dependency>
+</dependencies>
+\end{lstlisting}
+
+\section{Création des entités JPA}
+Nous avons mis en place les entités JPA représentant le modèle de données de l'application.
+
+\subsection{Entité Customer}
+Représente un client de la banque avec ses informations personnelles.
+
+\begin{lstlisting}[language=Java, caption=Customer.java]
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
+public class Customer {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String email;
+    @OneToMany(mappedBy = "customer")
+    private List<BankAccount> accounts;
+    private String createdBy;
+}
+\end{lstlisting}
+
+\subsection{Entité BankAccount}
+Classe abstraite représentant un compte bancaire.
+
+\begin{lstlisting}[language=Java, caption=BankAccount.java]
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "TYPE", length = 4)
+@Data @NoArgsConstructor @AllArgsConstructor
+public abstract class BankAccount {
+    @Id
+    private String id;
+    private double balance;
+    private Date createdAt;
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status;
+    @ManyToOne
+    private Customer customer;
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<AccountOperation> operations;
+}
+\end{lstlisting}
+
+\subsection{Entités CurrentAccount et SavingAccount}
+Extensions de BankAccount pour les types de comptes spécifiques.
+
+\begin{lstlisting}[language=Java, caption=CurrentAccount.java]
+@Entity
+@DiscriminatorValue("CURR")
+@Data @NoArgsConstructor @AllArgsConstructor
+public class CurrentAccount extends BankAccount {
+    private double overDraft;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=SavingAccount.java]
+@Entity
+@DiscriminatorValue("SAVE")
+@Data @NoArgsConstructor @AllArgsConstructor
+public class SavingAccount extends BankAccount {
+    private double interestRate;
+}
+\end{lstlisting}
+
+\subsection{Entité AccountOperation}
+Représente les opérations effectuées sur un compte.
+
+\begin{lstlisting}[language=Java, caption=AccountOperation.java]
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
+public class AccountOperation {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Date dateTime;
+    private double amount;
+    @Enumerated(EnumType.STRING)
+    private OperationType type;
+    private String description;
+    @ManyToOne
+    private BankAccount account;
+}
+\end{lstlisting}
+
+\section{Création des interfaces Repository}
+Nous avons créé des interfaces étendant JpaRepository pour gérer l'accès aux données.
+
+\begin{lstlisting}[language=Java, caption=CustomerRepository.java]
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    List<Customer> findByNameContains(String keyword);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=BankAccountRepository.java]
+@Repository
+public interface BankAccountRepository extends JpaRepository<BankAccount, String> {
+    List<BankAccount> findByCustomerId(Long customerId);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=AccountOperationRepository.java]
+@Repository
+public interface AccountOperationRepository extends JpaRepository<AccountOperation, Long> {
+    List<AccountOperation> findByAccountId(String accountId);
+    Page<AccountOperation> findByAccountIdOrderByDateTimeDesc(
+        String accountId, Pageable pageable);
+}
+\end{lstlisting}
+
+\section{Test de la couche DAO}
+Tests d'intégration pour valider les opérations CRUD sur les entités.
+
+\begin{lstlisting}[language=Java, caption=RepositoryTests.java]
+@SpringBootTest
+class RepositoryTests {
+    @Autowired private CustomerRepository customerRepository;
+    @Autowired private BankAccountRepository accountRepository;
+    
+    @Test
+    void testCreateCustomer() {
+        Customer customer = Customer.builder().name("Ali").email("ali@gmail.com").build();
+        Customer savedCustomer = customerRepository.save(customer);
+        assertNotNull(savedCustomer.getId());
+    }
+    
+    @Test
+    void testCreateAccount() {
+        Customer customer = customerRepository.findById(1L).orElse(null);
+        CurrentAccount account = new CurrentAccount();
+        account.setId(UUID.randomUUID().toString());
+        account.setBalance(5000);
+        account.setCreatedAt(new Date());
+        account.setCustomer(customer);
+        account.setOverDraft(1000);
+        BankAccount savedAccount = accountRepository.save(account);
+        assertNotNull(savedAccount.getId());
+    }
+}
+\end{lstlisting}
+
+\section{Implémentation de la couche Service et DTOs}
+Création des DTOs pour la communication et des services métier.
+
+\subsection{DTOs}
+Objets de transfert de données pour découpler les entités de l'API.
+
+\begin{lstlisting}[language=Java, caption=CustomerDTO.java]
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
+public class CustomerDTO {
+    private Long id;
+    private String name;
+    private String email;
+    private String createdBy;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=BankAccountDTO.java]
+@Data @NoArgsConstructor @AllArgsConstructor
+public class BankAccountDTO {
+    private String id;
+    private double balance;
+    private Date createdAt;
+    private String type;
+    private CustomerDTO customerDTO;
+}
+\end{lstlisting}
+
+\subsection{Service Interfaces}
+Définition des interfaces pour les services métier.
+
+\begin{lstlisting}[language=Java, caption=BankAccountService.java]
+public interface BankAccountService {
+    CustomerDTO saveCustomer(CustomerDTO customerDTO);
+    CurrentAccountDTO saveCurrentAccount(double balance, double overDraft, Long customerId);
+    SavingAccountDTO saveSavingAccount(double balance, double interestRate, Long customerId);
+    List<CustomerDTO> listCustomers();
+    BankAccountDTO getBankAccount(String accountId);
+    void debit(String accountId, double amount, String description);
+    void credit(String accountId, double amount, String description);
+    void transfer(String accountIdSource, String accountIdDestination, double amount);
+}
+\end{lstlisting}
+
+\subsection{Service Implementations}
+Implémentation des services métier avec la logique bancaire.
+
+\begin{lstlisting}[language=Java, caption=BankAccountServiceImpl.java]
+@Service
+@Transactional
+@AllArgsConstructor
+@Slf4j
+public class BankAccountServiceImpl implements BankAccountService {
+    private CustomerRepository customerRepository;
+    private BankAccountRepository bankAccountRepository;
+    private AccountOperationRepository accountOperationRepository;
+    private BankAccountMapper bankAccountMapper;
+    
+    @Override
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
+        Customer customer = bankAccountMapper.fromCustomerDTO(customerDTO);
+        Customer savedCustomer = customerRepository.save(customer);
+        return bankAccountMapper.fromCustomer(savedCustomer);
+    }
+    
+    @Override
+    public void debit(String accountId, double amount, String description) {
+        BankAccount bankAccount = getBankAccount(accountId);
+        if(bankAccount.getBalance() < amount)
+            throw new BalanceNotSufficientException("Balance not sufficient");
+        AccountOperation accountOperation = new AccountOperation();
+        accountOperation.setType(OperationType.DEBIT);
+        accountOperation.setAmount(amount);
+        accountOperation.setDescription(description);
+        accountOperation.setDateTime(new Date());
+        accountOperation.setAccount(bankAccount);
+        accountOperationRepository.save(accountOperation);
+        bankAccount.setBalance(bankAccount.getBalance() - amount);
+        bankAccountRepository.save(bankAccount);
+    }
+    
+    // Autres méthodes...
+}
+\end{lstlisting}
+
+\section{Création des RestControllers}
+Implémentation des API REST pour exposer les fonctionnalités.
+
+\begin{lstlisting}[language=Java, caption=CustomerRestController.java]
+@RestController
+@RequestMapping("/api/customers")
+@AllArgsConstructor
+@CrossOrigin("*")
+public class CustomerRestController {
+    private BankAccountService bankAccountService;
+    
+    @GetMapping
+    public List<CustomerDTO> customers() {
+        return bankAccountService.listCustomers();
+    }
+    
+    @GetMapping("/{id}")
+    public CustomerDTO getCustomer(@PathVariable(name = "id") Long customerId) {
+        return bankAccountService.getCustomer(customerId);
+    }
+    
+    @PostMapping
+    public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
+        return bankAccountService.saveCustomer(customerDTO);
+    }
+    
+    @PutMapping("/{id}")
+    public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        customerDTO.setId(id);
+        return bankAccountService.updateCustomer(customerDTO);
+    }
+    
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable Long id) {
+        bankAccountService.deleteCustomer(id);
+    }
+    
+    @GetMapping("/search")
+    public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return bankAccountService.searchCustomers(keyword);
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=BankAccountRestController.java]
+@RestController
+@RequestMapping("/api/accounts")
+@AllArgsConstructor
+@CrossOrigin("*")
+public class BankAccountRestController {
+    private BankAccountService bankAccountService;
+    
+    @GetMapping
+    public List<BankAccountDTO> listAccounts() {
+        return bankAccountService.listBankAccounts();
+    }
+    
+    @GetMapping("/{id}")
+    public BankAccountDTO getBankAccount(@PathVariable String id) {
+        return bankAccountService.getBankAccount(id);
+    }
+    
+    @GetMapping("/{id}/operations")
+    public List<AccountOperationDTO> getAccountHistory(@PathVariable String id) {
+        return bankAccountService.accountHistory(id);
+    }
+    
+    @GetMapping("/{id}/pageOperations")
+    public AccountHistoryDTO getAccountOperations(
+            @PathVariable String id,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "5") int size) {
+        return bankAccountService.getAccountHistory(id, page, size);
+    }
+    
+    @PostMapping("/debit")
+    public DebitDTO debit(@RequestBody DebitDTO debitDTO) {
+        bankAccountService.debit(debitDTO.getAccountId(), debitDTO.getAmount(), debitDTO.getDescription());
+        return debitDTO;
+    }
+    
+    @PostMapping("/credit")
+    public CreditDTO credit(@RequestBody CreditDTO creditDTO) {
+        bankAccountService.credit(creditDTO.getAccountId(), creditDTO.getAmount(), creditDTO.getDescription());
+        return creditDTO;
+    }
+    
+    @PostMapping("/transfer")
+    public void transfer(@RequestBody TransferRequestDTO transferRequestDTO) {
+        bankAccountService.transfer(
+            transferRequestDTO.getAccountSource(), 
+            transferRequestDTO.getAccountDestination(), 
+            transferRequestDTO.getAmount());
+    }
+}
+\end{lstlisting}
+
+\section{Configuration de Swagger}
+Mise en place de la documentation API avec Swagger/OpenAPI.
+
+\begin{lstlisting}[language=Java, caption=OpenApiConfig.java]
+@Configuration
+public class OpenApiConfig {
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Digital Banking API")
+                        .version("1.0")
+                        .description("API documentation for Digital Banking application")
+                        .contact(new Contact()
+                                .name("Banking Team")
+                                .email("contact@banking.com")));
+    }
+}
+\end{lstlisting}
+
+\screenshot{swagger_documentation.png}{0.8} % Swagger API documentation
+
+\chapter{Partie 2 : Frontend Angular - Implémentation}
+\resetcounter{screenshotcounter}
+
+\section{Création du projet Angular}
+Nous avons créé un projet Angular et configuré la structure de base avec les dépendances nécessaires.
+
+\begin{lstlisting}[language=bash, caption=Création du projet Angular]
+ng new digital-banking-frontend --routing --style=scss
+cd digital-banking-frontend
+ng add @ng-bootstrap/ng-bootstrap
+npm install chart.js
+\end{lstlisting}
+
+\section{Création des modèles}
+Définition des interfaces TypeScript correspondant aux DTOs du backend.
+
+\begin{lstlisting}[language=TypeScript, caption=customer.model.ts]
+export interface Customer {
+  id: number;
+  name: string;
+  email: string;
+  createdBy: string;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=TypeScript, caption=account.model.ts]
+export interface BankAccount {
+  id: string;
+  balance: number;
+  createdAt: Date;
+  status: string;
+  type: string;
+  customer: Customer;
+}
+
+export interface CurrentAccount extends BankAccount {
+  overDraft: number;
+}
+
+export interface SavingAccount extends BankAccount {
+  interestRate: number;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=TypeScript, caption=operation.model.ts]
+export enum OperationType {
+  DEBIT = 'DEBIT',
+  CREDIT = 'CREDIT'
+}
+
+export interface AccountOperation {
+  id: number;
+  dateTime: Date;
+  amount: number;
+  type: OperationType;
+  description: string;
+}
+\end{lstlisting}
+
+\section{Services Angular}
+Création des services pour communiquer avec les API REST du backend.
+
+\begin{lstlisting}[language=TypeScript, caption=customer.service.ts]
+@Injectable({
+  providedIn: 'root'
+})
+export class CustomerService {
+  private apiUrl = `${environment.apiUrl}/customers`;
+
+  constructor(private http: HttpClient) { }
+
+  getCustomers(): Observable<Customer[]> {
+    return this.http.get<Customer[]>(this.apiUrl)
+      .pipe(catchError(this.handleError));
+  }
+
+  searchCustomers(keyword: string): Observable<Customer[]> {
+    return this.http.get<Customer[]>(`${this.apiUrl}/search?keyword=${keyword}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getCustomer(id: number): Observable<Customer> {
+    return this.http.get<Customer>(`${this.apiUrl}/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  saveCustomer(customer: Customer): Observable<Customer> {
+    return this.http.post<Customer>(this.apiUrl, customer)
+      .pipe(catchError(this.handleError));
+  }
+
+  updateCustomer(customer: Customer): Observable<Customer> {
+    return this.http.put<Customer>(`${this.apiUrl}/${customer.id}`, customer)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteCustomer(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('API Error:', error);
+    return throwError(() => error.message || 'Server Error');
+  }
+}
+\end{lstlisting}
+
+\section{Composants Angular}
+Création des composants pour l'interface utilisateur.
+
+\subsection{Composant Customer}
+Gestion des clients avec les opérations CRUD.
+
+\begin{lstlisting}[language=TypeScript, caption=customers.component.ts]
+@Component({
+  selector: 'app-customers',
+  templateUrl: './customers.component.html',
+  styleUrls: ['./customers.component.scss']
+})
+export class CustomersComponent implements OnInit {
+  customers: Customer[] = [];
+  selectedCustomer: Customer | null = null;
+  searchFormGroup: FormGroup;
+  customerFormGroup: FormGroup;
+  errorMessage: string = '';
+  isEditMode: boolean = false;
+  currentCustomerId?: number;
+  isDetailsView: boolean = false;
+
+  constructor(
+    private customerService: CustomerService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this.searchFormGroup = this.fb.group({
+      keyword: ['']
+    });
+
+    this.customerFormGroup = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  ngOnInit(): void {
+    // Vérifier si nous sommes en mode détails
+    this.route.paramMap.subscribe(params => {
+      const customerId = params.get('id');
+      if (customerId) {
+        this.isDetailsView = true;
+        this.loadCustomerDetails(+customerId);
+      } else {
+        this.isDetailsView = false;
+        this.loadCustomers();
+      }
+    });
+  }
+
+  loadCustomerDetails(id: number): void {
+    this.customerService.getCustomer(id).subscribe({
+      next: (data) => {
+        this.selectedCustomer = data;
+      },
+      error: (err) => {
+        this.errorMessage = err;
+        console.error('Error loading customer details:', err);
+      }
+    });
+  }
+
+  loadCustomers(): void {
+    this.customerService.getCustomers().subscribe({
+      next: (data) => {
+        this.customers = data;
+      },
+      error: (err) => {
+        this.errorMessage = err;
+        console.error('Error loading customers:', err);
+      }
+    });
+  }
+
+  searchCustomers(): void {
+    const keyword = this.searchFormGroup.value.keyword;
+    this.customerService.searchCustomers(keyword).subscribe({
+      next: (data) => {
+        this.customers = data;
+      },
+      error: (err) => {
+        this.errorMessage = err;
+        console.error('Error searching customers:', err);
+      }
+    });
+  }
+
+  // Méthodes CRUD supplémentaires...
+}
+\end{lstlisting}
+
+\subsection{Composant Dashboard}
+Visualisation des données avec Chart.js.
+
+\begin{lstlisting}[language=TypeScript, caption=dashboard.component.ts]
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
+})
+export class DashboardComponent implements OnInit {
+  accounts: BankAccount[] = [];
+  accountChart: any;
+  transactionChart: any;
+
+  constructor(private accountService: AccountService) {}
+
+  ngOnInit(): void {
+    this.loadAccounts();
+  }
+
+  loadAccounts(): void {
+    this.accountService.getAccounts().subscribe({
+      next: (data) => {
+        this.accounts = data;
+        this.initCharts();
+      },
+      error: (err) => console.error('Error loading accounts:', err)
+    });
+  }
+
+  initCharts(): void {
+    // Graphique des soldes des comptes
+    const accountLabels = this.accounts.map(acc => acc.id.substring(0, 8));
+    const accountData = this.accounts.map(acc => acc.balance);
+    const accountTypes = this.accounts.map(acc => 
+      acc.type === 'CurrentAccount' ? 'Current' : 'Saving');
+
+    const ctx = document.getElementById('accountChart') as HTMLCanvasElement;
+    this.accountChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: accountLabels,
+        datasets: [{
+          label: 'Account Balance',
+          data: accountData,
+          backgroundColor: accountTypes.map(type => 
+            type === 'Current' ? 'rgba(54, 162, 235, 0.5)' : 'rgba(255, 99, 132, 0.5)'),
+          borderColor: accountTypes.map(type => 
+            type === 'Current' ? 'rgb(54, 162, 235)' : 'rgb(255, 99, 132)'),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    
+    // Initialisation d'autres graphiques...
+  }
+}
+\end{lstlisting}
+
+\section{Navigation et Routes}
+Configuration des routes pour naviguer entre les différentes pages de l'application.
+
+\begin{lstlisting}[language=TypeScript, caption=app.routes.ts]
+export const routes: Routes = [
+  // Route par défaut
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+
+  // Routes d'authentification
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+
+  // Routes réservées aux administrateurs
+  { path: 'customers', component: CustomersComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'customers/:id', component: CustomersComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'accounts/:id', component: AccountDetailsComponent, canActivate: [AuthGuard, AdminGuard] },
+
+  // Routes pour tous les utilisateurs authentifiés
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+
+  // Route par défaut
+  { path: '**', redirectTo: '/login', pathMatch: 'full' }
+];
+\end{lstlisting}
+
+\screenshot{angular_routes.png}{0.8} % Angular routes diagram
+
+\chapter{Partie 3 : Sécurité - Implémentation}
+\resetcounter{screenshotcounter}
+
+\section{Entités de sécurité}
+Création des entités pour gérer les utilisateurs et les rôles.
+
+\begin{lstlisting}[language=Java, caption=AppUser.java]
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor
+public class AppUser {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String password;
+    private String email;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<AppRole> roles = new ArrayList<>();
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=AppRole.java]
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor
+public class AppRole {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+}
+\end{lstlisting}
+
+\section{Configuration de Spring Security}
+Configuration de la sécurité avec JWT.
+
+\begin{lstlisting}[language=Java, caption=SecurityConfig.java]
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+    private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpServletRequest request) {
+        return http
+            .csrf().disable()
+            .authorizeHttpRequests()
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+            .requestMatchers("/api/customers/**").hasAuthority("ADMIN")
+            .requestMatchers("/api/accounts/**").authenticated()
+            .anyRequest().authenticated()
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+    
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+\end{lstlisting}
+
+\section{Service JWT}
+Implémentation de l'authentification avec JWT.
+
+\begin{lstlisting}[language=Java, caption=JwtTokenUtil.java]
+@Service
+public class JwtTokenUtil {
+    @Value("${jwt.secret}")
+    private String secret;
+    
+    @Value("${jwt.expiration}")
+    private Long expiration;
+    
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        claims.put("roles", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+    
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+    
+    public String getUsernameFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+    
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+    
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+    
+    public Date getExpirationDateFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+}
+\end{lstlisting}
+
+\section{Filtre d'authentification JWT}
+Implémentation du filtre pour valider les tokens.
+
+\begin{lstlisting}[language=Java, caption=JwtAuthenticationFilter.java]
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                   HttpServletResponse response, 
+                                   FilterChain filterChain) 
+                                   throws ServletException, IOException {
+        final String header = request.getHeader("Authorization");
+        String username = null;
+        String jwtToken = null;
+        
+        if (header != null && header.startsWith("Bearer ")) {
+            jwtToken = header.substring(7);
+            try {
+                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+            } catch (Exception e) {
+                logger.error("JWT Token validation error: " + e.getMessage());
+            }
+        }
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = 
+                    new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}
+\end{lstlisting}
+
+\section{Intercepteur Angular pour JWT}
+Configuration de l'authentification côté client.
+
+\begin{lstlisting}[language=TypeScript, caption=auth.interceptor.ts]
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+  const token = localStorage.getItem('auth_token');
+
+  if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
+    return next(req);
+  }
+
+  if (token) {
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return next(authReq).pipe(
+      catchError(error => {
+        if (error.status === 401 || error.status === 403) {
+          console.log('Authentication error:', error);
+          localStorage.removeItem('auth_token');
+          router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  router.navigate(['/login']);
+  return next(req);
+};
+\end{lstlisting}
+
+\chapter{Fonctionnalités supplémentaires}
+\resetcounter{screenshotcounter}
+
+\section{Initialisation des données}
+Création d'un initialiseur pour générer des données de test.
+
+\begin{lstlisting}[language=Java, caption=DataInitializer.java]
+@Component
+@RequiredArgsConstructor
+public class DataInitializer implements CommandLineRunner {
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final CustomerRepository customerRepository;
+    private final BankAccountService accountService;
+    private final PasswordEncoder passwordEncoder;
+    
+    @Override
+    public void run(String... args) throws Exception {
+        // Création des rôles
+        if (roleRepository.findByName("USER").isEmpty()) {
+            roleRepository.save(new AppRole(null, "USER"));
+        }
+        if (roleRepository.findByName("ADMIN").isEmpty()) {
+            roleRepository.save(new AppRole(null, "ADMIN"));
+        }
+        
+        // Création des utilisateurs par défaut
+        if (userRepository.findByUsername("admin").isEmpty()) {
+            AppUser adminUser = new AppUser();
+            adminUser.setUsername("admin");
+            adminUser.setPassword(passwordEncoder.encode("1234"));
+            adminUser.setEmail("admin@gmail.com");
+            adminUser.setRoles(List.of(
+                roleRepository.findByName("USER").get(),
+                roleRepository.findByName("ADMIN").get()
+            ));
+            userRepository.save(adminUser);
+        }
+        
+        if (userRepository.findByUsername("user").isEmpty()) {
+            AppUser user = new AppUser();
+            user.setUsername("user");
+            user.setPassword(passwordEncoder.encode("1234"));
+            user.setEmail("user@gmail.com");
+            user.setRoles(List.of(
+                roleRepository.findByName("USER").get()
+            ));
+            userRepository.save(user);
+        }
+        
+        // Création de clients exemple avec des noms arabes en caractères latins
+        List<String> arabicNames = List.of(
+            "Ahmed", "Mohammed", "Fatima", "Aisha", "Omar",
+            "Layla", "Youssef", "Nour", "Ali", "Zainab"
+        );
+        
+        Random random = new Random();
+        
+        for (int i = 0; i < 10; i++) {
+            String name = arabicNames.get(i);
+            CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO.setName(name);
+            customerDTO.setEmail(name.toLowerCase() + "@gmail.com");
+            
+            CustomerDTO savedCustomer = accountService.saveCustomer(customerDTO);
+            
+            // Création de 1-3 comptes par client
+            int numAccounts = random.nextInt(3) + 1;
+            for (int j = 0; j < numAccounts; j++) {
+                boolean isCurrent = random.nextBoolean();
+                double initialBalance = 1000 + random.nextDouble() * 90000;
+                
+                if (isCurrent) {
+                    accountService.createCurrentAccount(initialBalance, 1000, savedCustomer.getId());
+                } else {
+                    accountService.createSavingAccount(initialBalance, 3.5, savedCustomer.getId());
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\chapter{Conclusion}
+\resetcounter{screenshotcounter}
+
+\section{Récapitulatif du projet}
+Dans ce projet, nous avons développé une application complète de gestion de comptes bancaires avec les fonctionnalités suivantes :
+\begin{itemize}
+    \item Un backend Spring Boot avec des API REST sécurisées par JWT
+    \item Un frontend Angular avec une interface réactive et intuitive
+    \item Un système d'authentification et d'autorisation basé sur les rôles
+    \item Une gestion complète des clients et des comptes bancaires
+    \item Des opérations bancaires (débit, crédit, virement)
+    \item Un tableau de bord avec visualisation des données
+\end{itemize}
+
+\section{Compétences acquises}
+Ce projet nous a permis de développer diverses compétences :
+\begin{itemize}
+    \item Maîtrise de Spring Boot et de ses différents modules (Spring Data, Spring Security, etc.)
+    \item Développement d'applications Angular avec une architecture modulaire
+    \item Implémentation d'un système d'authentification JWT
+    \item Conception et développement d'une architecture orientée services
+    \item Utilisation de bonnes pratiques de développement (Clean Code, DTOs, etc.)
+\end{itemize}
+
+\section{Perspectives d'évolution}
+L'application pourrait être améliorée avec les fonctionnalités suivantes :
+\begin{itemize}
+    \item Implémentation d'un système de notifications pour les opérations importantes
+    \item Ajout de nouveaux types de comptes et produits bancaires
+    \item Développement d'une application mobile utilisant les mêmes API
+    \item Amélioration de la sécurité avec l'authentification à deux facteurs
+    \item Intégration avec des services externes de paiement
+\end{itemize}
+
+\screenshot{conclusion.png}{0.8} % Conclusion diagram
+
+\chapter*{Références}
+\addcontentsline{toc}{chapter}{Références}
+
+\begin{thebibliography}{9}
+
+\bibitem{spring} 
+Spring Framework Documentation,
+\url{https://docs.spring.io/spring-framework/docs/current/reference/html/}
+
+\bibitem{springsecurity} 
+Spring Security Reference,
+\url{https://docs.spring.io/spring-security/reference/}
+
+\bibitem{jwt} 
+JWT.io - Introduction to JSON Web Tokens,
+\url{https://jwt.io/introduction}
+
+\bibitem{angular} 
+Angular Documentation,
+\url{https://angular.io/docs}
+
+\bibitem{bootstrap} 
+Bootstrap Documentation,
+\url{https://getbootstrap.com/docs/5.0/getting-started/introduction/}
+
+\bibitem{chartjs} 
+Chart.js Documentation,
+\url{https://www.chartjs.org/docs/latest/}
+
+\bibitem{javadoc} 
+Documentation Java,
+\url{https://docs.oracle.com/javase/8/docs/api/}
+
+\bibitem{typescript} 
+TypeScript Documentation,
+\url{https://www.typescriptlang.org/docs/}
+
+\bibitem{youtube1} 
+Présentation du Projet Digital Banking,
+\url{https://www.youtube.com/watch?v=x6gFWmRxNPE}
+
+\bibitem{youtube2} 
+Backend Spring Boot - Partie 1,
+\url{https://www.youtube.com/watch?v=muuFQWnCQd0}
+
+\bibitem{youtube3} 
+Backend Spring Boot - Partie 2,
+\url{https://www.youtube.com/watch?v=PTI8cniOXLc}
+
+\bibitem{youtube4} 
+Client Angular,
+\url{https://www.youtube.com/watch?v=bOoPKctcE0s}
+
+\bibitem{youtube5} 
+Sécurité avec Spring Security et JWT,
+\url{https://www.youtube.com/watch?v=n65zFfl9dqA}
+
+\end{thebibliography}
+
+\appendix
+\chapter{Code source complet}
+
+Le code source complet du projet est disponible dans le dépôt GitHub suivant :
+\url{https://github.com/yourusername/digital-banking}
+
+\section{Structure du projet}
+
+\begin{verbatim}
+digital-banking/
+├── backend/                 # Projet Spring Boot
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/ma/enset/digital_banking/
+│   │   │   │   ├── controllers/    # Contrôleurs REST
+│   │   │   │   ├── dtos/           # Objets de transfert de données
+│   │   │   │   ├── entities/       # Entités JPA
+│   │   │   │   ├── exceptions/     # Exceptions personnalisées
+│   │   │   │   ├── mappers/        # Mappeurs DTO/Entity
+│   │   │   │   ├── repositories/   # Repositories Spring Data
+│   │   │   │   ├── security/       # Configuration de sécurité
+│   │   │   │   └── services/       # Services métier
+│   │   │   └── resources/          # Ressources (properties, etc.)
+│   │   └── test/                   # Tests unitaires et d'intégration
+│   └── pom.xml                     # Dépendances Maven
+│
+└── frontend/                # Projet Angular
+    ├── src/
+    │   ├── app/
+    │   │   ├── components/         # Composants Angular
+    │   │   ├── guards/             # Guards de sécurité
+    │   │   ├── interceptors/       # Intercepteurs HTTP
+    │   │   ├── models/             # Interfaces TypeScript
+    │   │   ├── services/           # Services Angular
+    │   │   └── app.routes.ts       # Configuration des routes
+    │   ├── assets/                 # Ressources statiques
+    │   └── environments/           # Configuration des environnements
+    └── package.json                # Dépendances NPM
+\end{verbatim}
+
+\chapter{Instructions de déploiement}
+
+\section{Configuration requise}
+\begin{itemize}
+    \item Java 17 ou supérieur
+    \item Maven 3.8 ou supérieur
+    \item Node.js 16 ou supérieur
+    \item Angular CLI 17
+    \item MySQL 8 ou H2 (base de données embarquée)
+\end{itemize}
+
+\section{Déploiement du backend}
+
+\begin{enumerate}
+    \item Cloner le dépôt : \verb|git clone https://github.com/yourusername/digital-banking.git|
+    \item Naviguer vers le dossier backend : \verb|cd digital-banking/backend|
+    \item Configurer la base de données dans \verb|application.properties|
+    \item Compiler et exécuter le projet : \verb|mvn spring-boot:run|
+\end{enumerate}
+
+\section{Déploiement du frontend}
+
+\begin{enumerate}
+    \item Naviguer vers le dossier frontend : \verb|cd digital-banking/frontend|
+    \item Installer les dépendances : \verb|npm install|
+    \item Compiler et exécuter le projet : \verb|ng serve|
+    \item Accéder à l'application via : \verb|http://localhost:4200|
+\end{enumerate}
+
+\end{document} 
